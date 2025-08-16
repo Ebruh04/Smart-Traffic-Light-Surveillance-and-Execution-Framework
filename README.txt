@@ -1,125 +1,70 @@
-Smart Traffic Light Surveillance and Execution Framework
----------------------------------------------------
-1. OVERVIEW
----------------------------------------------------
-This project simulates a smart traffic light system at a four-way intersection.
-The simulation supports both normal traffic light operation and a pedestrian
-mode that temporarily prioritizes pedestrians at a specific crossing.
+Smart Traffic Light Simulation (Raylib C++)
 
-The system operates in a **clockwise traffic cycle**:
-    North -> East -> South -> West -> repeat
+Introduction
+------------
+This project is a traffic light simulation built using Raylib in C++.
+It demonstrates a realistic four-way intersection where:
+- Each direction (North, East, South, West) has its own traffic light.
+- Only one light is active at a time in a clockwise cycle.
+- Pedestrian buttons allow safe walk signals.
+- A faulty mode is implemented where lights can fail and the cycle adapts by skipping or speeding up.
 
-Only one traffic light is green at a time.
+Logic and Working
+-----------------
+1. Traffic Light Cycle
+   - Only one traffic light turns GREEN at a time.
+   - After the green phase ends, it switches to YELLOW briefly.
+   - The next direction becomes GREEN in a clockwise sequence:
+     North -> East -> South -> West -> repeat.
+   - If a light is faulty, it is skipped in the cycle.
+   - This ensures no two lights are green at the same time.
 
-Pedestrians can press a button to override normal traffic operation,
-turning their direction's light DARK GREEN for 5 seconds while all other
-directions stay RED.
+2. Pedestrian Mode
+   - Each direction has its own pedestrian button.
+   - When pressed, the system:
+     a) Switches the current direction’s light into pedestrian mode (dark green).
+     b) All other lights are forced RED.
+     c) Pedestrian mode lasts for 5 seconds, after which normal cycling resumes.
+   - If multiple pedestrian buttons are pressed, each is handled in the order of the cycle.
 
-The program renders a graphical intersection using Raylib, including:
-    - Traffic lights (red, yellow, green)
-    - Pedestrian button controls
-    - Countdown timers for each light
-    - Background image (if available)
+3. Faulty Mode
+   - A direction can be marked as faulty.
+   - When faulty, that light is skipped in the normal cycle.
+   - This simulates a real-world scenario where a light is out of order.
+   - The system automatically speeds up the cycle to avoid delays.
 
----------------------------------------------------
-2. FEATURES
----------------------------------------------------
-- **Four independent traffic lights**: North, East, South, West
-- **Clockwise light cycle** with adjustable green/yellow/red durations
-- **Pedestrian Mode**:
-    - Activated by clicking the "PED" button below any traffic light
-    - Light changes to DARK GREEN for pedestrians for 5 seconds
-    - All other lights remain RED during pedestrian mode
-    - Automatically resumes normal cycle after pedestrian phase
-- **Custom background support**:
-    - Background PNG can be loaded and resized to fit window
-    - If missing, a default greenish background is shown
-- **Real-time countdown timers** displayed on each light
-- **Responsive mouse interaction** for pedestrian button clicks
-- **Safe interruption**:
-    - Cycle state is saved when pedestrian mode activates
-    - Restored after pedestrian phase ends
+4. User Controls
+   - Number keys (1, 2, 3, 4) act as pedestrian buttons for North, East, South, and West.
+   - Pressing a key switches that direction into pedestrian mode.
+   - Faulty mode is simulated in the code for testing and can be toggled in logic.
 
----------------------------------------------------
-3. FILES
----------------------------------------------------
-- main.cpp            → Source code for simulation
-- background.png      → Optional background image (your intersection map)
-- [Recorded demo.mov] → Example screen recording of program in action
+Code Explanation
+----------------
+- The program uses Raylib for rendering graphics.
+- Each light is represented by a structure containing its state (RED, YELLOW, GREEN, PEDESTRIAN).
+- A central controller updates the states based on a timer.
+- The update logic checks:
+  a) If a pedestrian button was pressed, override with pedestrian mode.
+  b) If a light is faulty, skip it.
+  c) Otherwise, continue the clockwise cycle.
+- Drawing functions handle rendering each light’s color and pedestrian indicators.
 
----------------------------------------------------
-4. REQUIREMENTS
----------------------------------------------------
-- C++17 compatible compiler (e.g., g++, clang++)
-- Raylib library installed (version 4.x recommended)
-- A PNG background image (optional, 1000x700 recommended for no scaling)
+Output
+------
+- A 2D simulation window shows four traffic lights arranged in a crossroad pattern.
+- Lights change one by one in a clockwise manner.
+- When a pedestrian button is pressed, the corresponding light switches to pedestrian mode.
+- Faulty mode makes the system skip that light and move to the next.
+- The simulation gives a clear, step-by-step representation of how modern traffic systems handle normal, pedestrian, and faulty conditions.
 
----------------------------------------------------
-5. BUILD & RUN
----------------------------------------------------
-1. Install Raylib (see: https://www.raylib.com/)
-2. Compile with:
-       g++ main.cpp -o traffic_sim -lraylib -std=c++17
-3. Run:
-       ./traffic_sim
-4. If you want a custom background:
-       - Place your PNG in the specified path inside `bgPath`
-       - Match resolution to avoid scaling artifacts
+Conclusion
+----------
+This simulation provides an educational demonstration of traffic light systems with added realism:
+- Clockwise cycling.
+- Pedestrian crossing handling.
+- Faulty mode management.
 
----------------------------------------------------
-6. CONTROLS
----------------------------------------------------
-- **Mouse Click on PED Button**:
-    Activates pedestrian mode for the chosen direction for 5 seconds.
-
-- **Close Window**:
-    Ends the simulation.
-
----------------------------------------------------
-7. CODE STRUCTURE
----------------------------------------------------
-- **TrafficLight class**:
-    Represents a single light pole with independent timers and states.
-
-- **IntersectionController class**:
-    Handles the overall state machine:
-        - Clockwise light cycling
-        - Switching between green, yellow, red
-        - Pedestrian mode activation & restoration
-    Holds an array of 4 TrafficLight objects.
-
-- **Main Loop**:
-    1. Handles mouse input for pedestrian buttons
-    2. Updates traffic light timers and states
-    3. Draws background, lights, buttons, and timers
-
----------------------------------------------------
-8. EXTENSIBILITY
----------------------------------------------------
-This project can be expanded with:
-- Vehicle detection sensors
-- Variable pedestrian crossing times
-- Sound alerts for visually impaired pedestrians
-- Integration with real-time traffic data
-- Multiple intersections with network control
-
----------------------------------------------------
-9. NOTES
----------------------------------------------------
-- If the background image is not found, a default green background is shown.
-- All timing values (green, yellow, red, pedestrian) are defined in milliseconds
-  and can be adjusted in the `TrafficLight` constructor or `pressPedestrian()` method.
-- Traffic lights use DARK GREEN for pedestrian mode to distinguish from normal green.
-
----------------------------------------------------
-10. DEMO
----------------------------------------------------
-In the provided screen recording, you can see:
-- Traffic lights changing in a clockwise sequence
-- Clicking a pedestrian button instantly activates pedestrian mode
-- Countdown timers updating in real time
-- Background image overlayed under all objects
-
----------------------------------------------------
-END OF README
-===================================================
+It can be expanded further by adding:
+- Vehicle spawn and movement simulation.
+- Emergency vehicle priority.
+- Advanced pedestrian safety timers.
